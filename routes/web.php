@@ -16,4 +16,4 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', 'HomeController@index')->name('home');
 
 Route::get('/search', 'SearchController@index')->name('search.index');
-Route::post('/search', 'SerchController@store')->name('search.store');
+Route::post('/search', 'SearchController@store')->name('search.store');
