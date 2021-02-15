@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateSearchingResultsTable extends Migration
+class CreateSearchSearchingResultTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,13 +13,10 @@ class CreateSearchingResultsTable extends Migration
      */
     public function up()
     {
-        Schema::create('searching_results', function (Blueprint $table) {
+        Schema::create('search_searching_result', function (Blueprint $table) {
             $table->id();
-            $table->string('title');
-            $table->string('link');
-            $table->string('preview');
-            $table->boolean('favorite')->default(0);
-            $table->integer('channel_id');
+            $table->integer('search_id');
+            $table->integer('searching_result_id');
             $table->timestamps();
         });
     }
@@ -31,6 +28,6 @@ class CreateSearchingResultsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('searching_results');
+        Schema::dropIfExists('search_searching_result');
     }
 }

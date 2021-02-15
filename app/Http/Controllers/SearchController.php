@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Channel;
 use App\Models\Search;
 use App\Models\SearchingResult;
 use Illuminate\Http\Request;
@@ -33,25 +34,36 @@ class SearchController extends Controller
 
             $searchResults = [];
             foreach ($results as $result) {
-                $row = [
-                    'search_id' => $search->id,
+                $channelRow = [
+                    'name' => $result->snippet->channelTitle,
+                    'link' => 'https://www.youtube.com/channel/' . $result->snippet->channelId
+                ];
+                if (!Channel::where('name', $channelRow['name'])->first()) {
+                    $channel = Channel::create($channelRow);
+                }
+                $resultRow = [
                     'title' => $result->snippet->title,
                     'link' => 'https://www.youtube.com/watch?v=' . $result->id->videoId,
                     'preview' => $result->snippet->thumbnails->high->url,
-                    'channel' => $result->snippet->channelTitle,
-                    'channelLink' => 'https://www.youtube.com/channel/' . $result->snippet->channelId
+                    'channel_id' => $channel->id
                 ];
-                array_push($searchResults, collect($row));
-                $searchRes = SearchingResult::create($row);
+                $searchRes = $search->searchingResult()->create($resultRow);
+                array_push($searchResults, collect($resultRow));
+//                $searchRes = SearchingResult::create($resultRow);
+//                $searchRes = SearchingResult::find($searchRes->id);
+
+//                $channel = $searchRes->channel()->create($channelRow);
+//                $channel = Channel::create($channelRow);
+//                dump($channel);
+//                dump($searchRes);
 
             }
-
-
-            $searchResults = collect($searchResults);
+            dd();
+//            $searchResults = SearchingResult::;
             return view('results', compact('searchResults'));
         } else {
-            $searchResults = SearchingResult::where('search_id', $search[0]->id)->get();
-            return view('results', compact('searchResults'));
+            $search = Search::with(['searchingResult.channel'])->first();
+            return view('results', compact('search'));
         }
     }
 }

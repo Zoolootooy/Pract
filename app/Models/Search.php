@@ -12,6 +12,6 @@ class Search extends Model
 
     public function searchingResult()
     {
-        return $this->hasMany('App\Models\SearchingResult');
+        return $this->belongsToMany('App\Models\SearchingResult', 'search_searching_result');
     }
 }
