@@ -10,8 +10,8 @@ class Search extends Model
         'query'
     ];
 
-    public function searchingResult()
+    public function videos()
     {
-        return $this->belongsToMany('App\Models\SearchingResult', 'search_searching_result');
+        return $this->belongsToMany('App\Models\Video', 'search_video');
     }
 }

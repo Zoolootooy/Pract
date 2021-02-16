@@ -4,15 +4,15 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class SearchingResult extends Model
+class Video extends Model
 {
     protected $fillable = [
         'title', 'link', 'preview', 'favorite', 'channel_id'
     ];
 
-    public function search()
+    public function searches()
     {
-        return $this->belongsToMany('App\Models\Search', 'search_searching_result');
+        return $this->belongsToMany('App\Models\Search', 'search_videos');
     }
 
     public function channel()

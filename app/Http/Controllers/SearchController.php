@@ -4,18 +4,45 @@ namespace App\Http\Controllers;
 
 use App\Models\Channel;
 use App\Models\Search;
-use App\Models\SearchingResult;
+use App\Models\Video;
 use Illuminate\Http\Request;
 use Google\Client;
 
 class SearchController extends Controller
 {
+
+    /**
+     * Show search list
+     */
+    public function index($query)
+    {
+        $search = Search::where('query', $query)->with(['videos.channel'])->first();
+        $videos = $search->videos()->paginate(20);
+        return view('results', compact(['videos', 'search']));
+    }
+
+    /**
+     * Show favorites video list
+     */
+    public function favorites()
+    {
+        $videos = Video::where('favorite', 1)->with(['channel'])->paginate(20);
+        $search = 'Любимые';
+        return  view('results', compact(['videos', 'search']));
+    }
+
+    /**
+     * Get answer on query and store in DB
+     * @param Request $request
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
+     */
     public function store(Request $request)
     {
 
-        $search = Search::where('query', $request->search)->get();
+        $search = Search::where('query', $request->search)->first();
 
-        if (!isset($search[0]->id)) {
+        if (!isset($search->id)) {
+            dd('Поиск запрещён');
             $client = new \Google_Client();
             $client->setApplicationName(env('APP_NAME'));
             $client->setScopes([
@@ -25,14 +52,14 @@ class SearchController extends Controller
 
             $service = new \Google_Service_YouTube($client);
             $optParams = array(
-                'maxResults' => 5,
+                'maxResults' => 50,
                 'q' => $request->search,
                 'type' => 'video'
             );
             $results = $service->search->listSearch('snippet', $optParams);
             $search = Search::create(['query' => $request->search]);
 
-            $searchResults = [];
+            $videos = [];
             foreach ($results as $result) {
                 $channelRow = [
                     'name' => $result->snippet->channelTitle,
@@ -47,8 +74,8 @@ class SearchController extends Controller
                     'preview' => $result->snippet->thumbnails->high->url,
                     'channel_id' => $channel->id
                 ];
-                $searchRes = $search->searchingResult()->create($resultRow);
-                array_push($searchResults, collect($resultRow));
+                $videosRes = $search->videos()->create($resultRow);
+                array_push($videos, collect($resultRow));
 //                $searchRes = SearchingResult::create($resultRow);
 //                $searchRes = SearchingResult::find($searchRes->id);
 
@@ -58,12 +85,21 @@ class SearchController extends Controller
 //                dump($searchRes);
 
             }
-            dd();
 //            $searchResults = SearchingResult::;
-            return view('results', compact('searchResults'));
-        } else {
-            $search = Search::with(['searchingResult.channel'])->first();
-            return view('results', compact('search'));
         }
+
+//        TODO сделать отдельный метод index для получения страниц выдачи
+        return redirect()->route('search.index', ['query' => $request->search]);
+    }
+
+    /**
+     * Update row
+     * @param Request $request
+     * @return false|string
+     */
+    public function update(Request $request)
+    {
+        $video = Video::find($request->id)->update(['favorite' => $request->like]);
+        return json_encode($video);
     }
 }

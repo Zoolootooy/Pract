@@ -7,11 +7,11 @@ use Illuminate\Database\Eloquent\Model;
 class Channel extends Model
 {
     protected $fillable = [
-        'name', 'link', 'searching_result_id'
+        'name', 'link', 'video_id'
     ];
 
-    public function searchingResults()
+    public function videos()
     {
-        return $this->hasMany('App\Models\SearchingResult');
+        return $this->hasMany('App\Models\Video');
     }
 }
