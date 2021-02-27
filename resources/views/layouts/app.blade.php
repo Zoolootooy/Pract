@@ -9,7 +9,9 @@
     @include('partials/links')
 </head>
 <body>
-<div class="container">
+
+<div class="container" >
+{{--    @include('partials/menu')--}}
     @yield('content')
 </div>
 </body>
