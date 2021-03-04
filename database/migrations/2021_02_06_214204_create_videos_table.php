@@ -20,6 +20,7 @@ class CreateVideosTable extends Migration
             $table->string('preview');
             $table->boolean('favorite')->default(0);
             $table->integer('channel_id');
+            $table->dateTime('published_at');
             $table->timestamps();
         });
     }

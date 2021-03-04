@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class Video extends Model
 {
     protected $fillable = [
-        'title', 'link', 'preview', 'favorite', 'channel_id'
+        'title', 'link', 'preview', 'favorite', 'channel_id', 'published_at'
     ];
 
     public function searches()

@@ -24,7 +24,7 @@
         "vue-template-compiler": "^2.6.10"
     },
     "dependencies": {
-        "vue-loading-spinner": "^1.0.11",
-        "vue-router": "^3.5.1"
+        "moment": "^2.29.1",
+        "vue-loading-spinner": "^1.0.11"
     }
 }

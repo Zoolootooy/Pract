@@ -15,7 +15,8 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/', 'HomeController@index')->name('home');
 
-Route::get('/search/{query}', 'SearchController@index')->name('search.index');
-Route::get('/favorites', 'SearchController@favorites')->name('search.favorites');
-Route::post('/search', 'SearchController@store')->name('search.store');
-Route::post('/like', 'SearchController@update')->name('search.update');
+Route::get('/search/{query}', 'Api\SearchController@index')->name('search');
+Route::get('/favorites', 'Api\SearchController@favorites')->name('search.favorites');
+Route::post('/search', 'Api\SearchController@store')->name('search.store');
+Route::post('/like', 'Api\SearchController@update')->name('search.update');
+

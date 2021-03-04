@@ -4,43 +4,57 @@
 
     <div class="menu"
          v-if="show !== 'search'">
-        <div class="btn btn-menu"
-                @click="routeHome">
-            Home
-        </div>
+        <nav class="navbar navbar-expand-lg navbar-light bg-light">
+            <a class="navbar-brand" href="/"></a>
+            <button class="navbar-toggler collapsed" type="button" data-toggle="collapse"
+                    data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
+                    aria-expanded="false" aria-label="Toggle navigation"
+                    :ref="menuBurger">
+                <span class="navbar-toggler-icon"></span>
+            </button>
 
+            <div class="navbar-collapse collapse" id="navbarSupportedContent" style="">
+                <ul class="navbar-nav mr-auto mt-2">
+                    <li class="nav-item mb-2">
+                        <div class="btn btn-menu"
+                             @click="routeHome">
+                            Home
+                        </div>
+                    </li>
+                    <li class="nav-item mb-2"  v-if="show !== 'favorites'">
+                        <div class="btn btn-menu"
+                             @click="routeFavorites">
+                            Favorites list
+                        </div>
+                    </li>
+                    <li class="nav-item mb-2" v-if="show !== 'results'">
+                        <div class="btn btn-menu"
+                            @click="submitForm">
+                            Search results
+                        </div>
+                    </li>
+                </ul>
+                <div>
+                    <input type="hidden"  name="_token" v-bind:value="csrf">
+                    <div class="menu-searchForm">
+                        <input
+                            class=" shadow-sm menu-searchForm__field"
+                            v-model='search'
+                            type="text"
+                            autocomplete="on"
+                            placeholder="Enter your search term">
 
-        <div class="btn btn-menu"
-                v-if="show !== 'results'"
-                @click="submitForm">
-            Search results
-        </div>
-
-        <div class="btn btn-menu"
-                v-if="show !== 'favorites'"
-                @click="routeFavorites">
-            Favorites list
-        </div>
-
-        <form class="searchForm-container">
-            <input type="hidden"  name="_token" v-bind:value="csrf">
-            <div class="row menu-searchForm">
-                <input id=""
-                       class=" shadow-sm menu-searchForm__field"
-                       v-model='search'
-                       type="text"
-                       autocomplete="on"
-                       placeholder="Enter your search term">
-
-                <div class="btn menu-searchForm__button"
-                     @click="submitForm">
-                    <i class="fas fa-search mr-3"></i>
+                        <div class="btn menu-searchForm__button"
+                             @click="submitForm">
+                            <i class="fas fa-search mr-3"></i>
+                        </div>
+                    </div>
                 </div>
             </div>
-        </form>
+        </nav>
     </div>
 
-    <form id="searchForm"  class="searchForm-container"
+    <div id="searchForm"  class="searchForm-container"
           v-if="show === 'search'">
         <input type="hidden"  name="_token" v-bind:value="csrf">
         <div class="row searchForm">
@@ -57,7 +71,14 @@
                         Search
                 </div>
         </div>
-    </form>
+
+        <div class="favorite-container text-center">
+            <div class="btn favorite"
+                @click="routeFavorites">
+                Favorites list
+            </div>
+        </div>
+    </div>
 
 
 
@@ -109,10 +130,17 @@
                     })
                     .then(response => (
                         this.videos = response.data['videos'],
-                            this.searchQuery = response.data['search'],
-                            this.show = 'results',
-                            this.showLoading = false
+                        this.searchQuery = response.data['search'],
+                        this.show = 'results',
+                        this.showLoading = false
+                    )).catch(error =>  (
+                        this.showLoading = false,
+                        alert(error)
                     ));
+                } else if(this.search === this.searchQuery) {
+                    this.showLoading = true;
+                    this.show = 'results';
+                    this.showLoading = false;
                 }
             },
 
@@ -132,9 +160,12 @@
                 })
                 .then(response => (
                     this.videos = response.data['videos'],
-                        this.searchQuery = response.data['search'],
-                        this.show = 'favorites',
-                        this.showLoading = false
+                    this.searchQuery = response.data['search'],
+                    this.show = 'favorites',
+                    this.showLoading = false
+                )).catch(error =>  (
+                    this.showLoading = false,
+                    alert(error)
                 ));
             }
         }
@@ -159,6 +190,26 @@ $searchFormHigh: 100px;
     z-index: 9000;
 
     background-color: #f8fafc;
+    @media(max-width: 991px) {
+        display: block;
+        height: 0;
+    }
+
+    & nav {
+        width: 90%;
+
+        @media(max-width: 991px) {
+            width: 100%;
+        }
+    }
+
+    & li {
+        margin-right: 3%;
+        @media(max-width: 991px) {
+            margin-right: 0;
+        }
+    }
+
 }
 
 .menu-searchForm {
@@ -169,6 +220,10 @@ $searchFormHigh: 100px;
 
     border-radius: $searchFormHigh/2;
 
+    @media(max-width: 991px) {
+        width: 100%;
+        font-size: 24px;
+    }
     &__field {
         width: 72.5%;
         height: $searchFormHigh/2;
@@ -176,6 +231,9 @@ $searchFormHigh: 100px;
         margin-left: 2.5%;
         padding-left: 3%;
         border: 0;
+        @media(max-width: 991px) {
+            margin-left: 0;
+        }
         &:focus {
             outline: none;
         }
@@ -196,6 +254,11 @@ $searchFormHigh: 100px;
         align-items: center;
         font-size: 14px;
 
+        @media(max-width: 991px) {
+            width: 27.5%;
+            font-size: 24px;
+        }
+
         &:hover {
             background-color: #31475e;
         }
@@ -209,7 +272,14 @@ $searchFormHigh: 100px;
     display: flex;
     height: $searchFormHigh/2;
     align-items: center;
-
+    width: 130px;
+    justify-content: center;
+    @media(max-width: 991px) {
+        width: 100%;
+        border-radius: $searchFormHigh/2;
+        justify-content: center;
+        font-size: 24px;
+    }
     &:hover {
         background-color: #31475e;
     }
@@ -246,6 +316,15 @@ $searchFormHigh: 100px;
     background-color: #3fb984;
     border-radius: $searchFormHigh/2;
 
+    @media(max-width: 767px) {
+        height: $searchFormHigh*2.5;
+    }
+
+    @media(max-width: 575px) {
+        margin-left: 2%;
+        margin-right: 2%;
+    }
+
     &__field {
         width: 72.5%;
         height:  $searchFormHigh*0.45;
@@ -253,6 +332,21 @@ $searchFormHigh: 100px;
         margin-left: 2.5%;
         padding-left: 3%;
         border: 0;
+
+        @media(max-width: 767px) {
+            width: 90%;
+            height:  $searchFormHigh*0.9;
+            margin-left: 5%;
+            margin-top: 5%;
+            border-radius: $searchFormHigh/2 $searchFormHigh/2 $searchFormHigh/2 $searchFormHigh/2;
+            font-size: 24px;
+            text-align: center
+        }
+
+        @media(max-width: 575px) {
+            font-size: 18px;
+        }
+
         &:focus {
             outline: none;
         }
@@ -273,15 +367,64 @@ $searchFormHigh: 100px;
         align-items: center;
         font-size: 32px;
 
+        @media(max-width: 767px) {
+            width: 90%;
+            margin-left: 5%;
+            margin-top: 5%;
+            margin-bottom: 5%;
+            height:  $searchFormHigh*0.9;
+            border-radius: $searchFormHigh/2 $searchFormHigh/2 $searchFormHigh/2 $searchFormHigh/2;
+        }
+
+        @media(max-width: 575px) {
+            font-size: 24px;
+        }
+
         &:hover {
             background-color: #31475e;
         }
     }
 }
 
+.favorite-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: $searchFormHigh/4;
+
+    @media(max-width: 767px) {
+        width: 100%;
+    }
+}
+
+.favorite {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 25%;
+    height: $searchFormHigh/2;
+    border-radius: $searchFormHigh/4;
+
+
+    background-color: #325361;
+    color: white;
+    font-size: 24px;
+
+    @media(max-width: 767px) {
+        width: 95%;
+    }
+
+    &:hover {
+        background-color: #31475e;
+    }
+}
 
 .videos {
     position: relative;
     top: $searchFormHigh;
+
+    @media(max-width: 767px) {
+        top: $searchFormHigh/2;
+    }
 }
 </style>

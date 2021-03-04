@@ -6,6 +6,9 @@
                <div class="video-result__title">
                    <a v-bind:href="video.link">{{video.title}}</a>
                </div>
+               <div class="video-result__publishedAt">
+                   Published: {{format_date(video.published_at)}}
+               </div>
                <div class="video-result__channel">
                    <a v-bind:href="video.channelLink">{{video.channel}}</a>
                </div>
@@ -35,7 +38,8 @@
 </template>
 
 <script>
-import axios from "axios";
+import axios from 'axios';
+import moment from 'moment';
 import {HourGlass} from 'vue-loading-spinner';
 export default {
     props: ['video'],
@@ -52,6 +56,12 @@ export default {
         HourGlass
     },
     methods: {
+        format_date(value){
+            if (value) {
+                return moment(String(value)).format('DD.MM.YYYY')
+            }
+        },
+
         like() {
             this.showLoading = true;
             const axios = require('axios').default;
@@ -94,11 +104,24 @@ $videoResultHigh: 200px;
     background-color: #3fb984;
     border-radius: $videoResultHigh/2;
 
+    @media(max-width: 767px) {
+        flex-direction: column;
+        height: $videoResultHigh*2.5;
+        margin-top: 8%;
+        margin-bottom: 8%;
+    }
+
     &__preview {
         width: 40%;
         height: $videoResultHigh;
         border-radius:  $videoResultHigh/2 0 0 $videoResultHigh/2;
         background-position: center;
+
+        @media(max-width: 767px) {
+            width: 100%;
+            height: $videoResultHigh*5;
+            border-radius:  $videoResultHigh/2 $videoResultHigh/2 0 0;
+        }
     }
 
 
@@ -109,15 +132,30 @@ $videoResultHigh: 200px;
         flex-direction: column;
         justify-content: flex-start;
         height: 100%;
+
+        @media(max-width: 767px) {
+            width: 100%;
+        }
+    }
+
+    &__publishedAt {
+        color:#325361;
     }
 
     &__title a, &__channel a, &__is-liked {
         color: white;
     }
 
-    &__title a {
-        font-size: 20px;
+    &__title {
+        @media(max-width: 767px) {
+            text-align: justify;
+        }
+
+        a {
+            font-size: 20px;
+        }
     }
+
 
     &__channel a {
         font-size: 14px;
@@ -134,6 +172,12 @@ $videoResultHigh: 200px;
         border-radius:  0 $videoResultHigh/2 $videoResultHigh/2 0;
 
         background-color: #31475e;
+
+        @media(max-width: 767px) {
+            width: 100% !important;
+            max-width: 100% !important;
+            border-radius:  0 0 $videoResultHigh/2 $videoResultHigh/2;
+        }
     }
     &__like:hover, &__dislike:hover {
         background-color: #31475e;
@@ -154,6 +198,12 @@ $videoResultHigh: 200px;
         color: white;
 
         font-size: 32px;
+
+        @media(max-width: 767px) {
+            width: 100% !important;
+            max-width: 100% !important;
+            border-radius:  0 0 $videoResultHigh/2 $videoResultHigh/2;
+        }
     }
 
 }

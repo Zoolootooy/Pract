@@ -27,6 +27,7 @@ class SearchController extends Controller
                 'favorite' => $video->favorite,
                 'channel' =>  $video->channel['name'],
                 'channelLink' =>  $video->channel['link'],
+                'published_at' => $video->published_at,
             ]);
         }
         $search = $search->query;
@@ -95,7 +96,8 @@ class SearchController extends Controller
                     'title' => $result->snippet->title,
                     'link' => 'https://www.youtube.com/watch?v=' . $result->id->videoId,
                     'preview' => $result->snippet->thumbnails->high->url,
-                    'channel_id' => $channel->id
+                    'channel_id' => $channel->id,
+                    'published_at' => str_replace('Z', ' ', str_replace('T', ' ',$result->snippet->publishedAt))
                 ];
                 $videosRes = $search->videos()->create($resultRow);
                 array_push($videos, collect($resultRow));
